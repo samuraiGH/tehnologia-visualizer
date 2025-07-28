@@ -1,0 +1,133 @@
+table {
+	margin: 100px;
+	border-collapse: collapse;
+	border: 2px solid rgb(140 140 140);
+	font-family: monospace;
+	letter-spacing: 1px;
+}
+th,
+td {
+	border: 1px solid rgb(160 160 160);
+	padding: 8px 10px;
+	min-width: 100px;
+}
+
+.diff_table_header {
+	background-color: #256E9C;
+	color: white;
+	padding-top:auto;
+	padding-bottom:auto;
+}
+
+.diff_table_header_error {
+	background-color: #9C2525;
+	color: white;
+	padding-top:auto;
+	padding-bottom:auto;
+}
+
+.diff_table_header a {
+	color: white;
+	display: inline-block;
+}
+.diff_table_header_error a {
+	color: white;
+}
+
+.group_name_header {
+	background-color: #256E9C;
+	color: white;
+	padding-top:auto;
+	padding-bottom:auto;
+}
+
+.reference_header {
+	text-align: center;
+	background-color: #39c400;
+	color: white;
+	padding: 10px;
+	font-family: monospace;
+}
+
+.no_diff_header {
+	text-align: center;
+	background-color: #4CC254;
+	color: white;
+	padding: 10px;
+	font-family: monospace;
+}
+
+.has_diff_header {
+	text-align: center;
+	background-color: #C24C4C;
+	color: white;
+	padding: 10px;
+	font-family: monospace;
+}
+
+.clickable {
+	cursor: pointer;
+}
+
+.comparable_attr_name {
+	background-color: #71B7E3;
+	color: white;
+	font-family: monospace;
+}
+
+.noncomparable_attr_name {
+	background-color: #AACEE3;
+	font-family: monospace;
+}
+
+.missed_attr_name {
+	background-color: #C771E3;
+	color: white;
+	font-family: monospace;
+}
+
+.reference {
+	background-color: #8be765;
+}
+
+.error {
+	padding: auto;
+	background-color: #D6D6D6;
+	color: white;
+	border-top: none;
+	border-bottom: none;
+}
+
+.missed {
+	background-color: #808080;
+	color: white;
+	text-align: center;
+}
+
+.missed_in_ref {
+	background-color: #E3C7FF;
+	color: white;
+	text-align: center;
+}
+
+.missed_in_ref_neq {
+	background-color: #CA96FF;
+	color: white;
+	text-align: center;
+}
+
+.eq {
+	background-color: #CBFF96;
+}
+.neq {
+	background-color: #FF9696;
+}
+
+.sep {
+	padding: auto;
+	background-color: #D6D6D6;
+	color: white;
+	border-left: none;
+	border-right: none;
+	height: 20px;
+}
