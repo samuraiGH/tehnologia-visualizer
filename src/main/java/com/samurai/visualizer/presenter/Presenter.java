@@ -94,7 +94,11 @@ public class Presenter {
 		try {
 			var html = model.makeHtmlTable();
 			
-			Files.writeString(Path.of("result.html"), html, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+			var path = Path.of("result.html");
+			
+			Files.writeString(path, html, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+			
+			view.showFileLocation(path.toAbsolutePath().toString());
 		} catch (IOException ex) {
 			System.getLogger(Presenter.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
 		}

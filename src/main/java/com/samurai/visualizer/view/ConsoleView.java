@@ -106,6 +106,11 @@ public class ConsoleView implements IView {
 		System.out.print(msg+"\n\n");
 	}
 	
+	@Override
+	public void showFileLocation(String path) {
+		System.out.print("Результат расположен в: "+path);
+	}
+	
 	private List<String> getXmlFiles(Scanner in){
 		var result = new ArrayList<String>();
 		

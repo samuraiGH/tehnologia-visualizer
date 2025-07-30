@@ -16,4 +16,5 @@ public interface IView {
 	void setXmlFilesPassedHandler(Consumer<XmlFilesPassedEventArgs> handler);
 	
 	void showError(String msg);
+	void showFileLocation(String path);
 }
