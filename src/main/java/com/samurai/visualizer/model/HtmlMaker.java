@@ -3,6 +3,7 @@ package com.samurai.visualizer.model;
 import com.samurai.visualizer.domain.*;
 import java.io.*;
 import java.util.*;
+import org.javatuples.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.*;
 
@@ -109,7 +110,7 @@ public class HtmlMaker {
 
 			var headerString = "[" + obj.getId() + "] " + obj.getName();
 
-			link.attributes().add("href", obj.getLink());
+			link.attr("href", obj.getLink());
 			link.text(headerString);
 		}
 	}
@@ -121,11 +122,14 @@ public class HtmlMaker {
 				.toList()
 		);
 		
+		// номер итерации
 		int index = 1;
 		
 		for (var group: possibleGroups){
 			var headerDataMap = makeGroupHeader(tableBody, group);
 			
+			//хранит информацию о найденных различиях
+			//для заполнения хедера группы
 			var diffMap = new HashMap<MainObject, Integer>();
 			for (var mainObj: mainObjects)
 				diffMap.put(mainObj, 0);
@@ -198,7 +202,6 @@ public class HtmlMaker {
 				case Comparable -> {
 					if (mainObj == refObject)
 						makeRefCell(tableRow, attrValue.get());
-					
 					else{
 						var refValue = getAttrValueIfExists(attrInfo, refObject);
 						var incDiff = makeComparableCell(tableRow, refValue.get(), attrValue);
@@ -219,33 +222,44 @@ public class HtmlMaker {
 	}
 	
 	private void makeNonComparableCell(Element tableRow, Optional<String> attrValue){
-		var tableDataText = processAttrValue(attrValue);
-
-		tableRow.appendElement("td").text(tableDataText);
+		var procRes = processAttrValue(attrValue);
+		var text = procRes.getValue0();
+		var isReduced = procRes.getValue1();
+		
+		tableRow.appendElement("td").text(text);
+		
+		if (isReduced)
+			setOpenReductedEvent(tableRow, attrValue.get());
 	}
 	
 	private void makeMissingInRefCell(Element tableRow, Optional<String> attrValue){
-		var tableDataText = processAttrValue(attrValue);
+		var procRes = processAttrValue(attrValue);
+		var text = procRes.getValue0();
+		var isReduced = procRes.getValue1();
 		
 		var tableData = tableRow.appendElement("td");
-		tableData.text(tableDataText);
+		tableData.text(text);
 		
 		if (attrValue.isEmpty())
 			tableData.addClass("missed_in_ref");
-		else
+		else{
 			tableData.addClass("missed_in_ref_neq");
+			
+			if (isReduced)
+				setOpenReductedEvent(tableRow, attrValue.get());
+		}	
 	}
 	
 	private void makeRefCell(Element tableRow, String attrValue){
-		var tableDataText = processAttrValue(attrValue);
-		
-		var isReducted = tableDataText.length() < attrValue.length();
+		var procRes = processAttrValue(attrValue);
+		var text = procRes.getValue0();
+		var isReduced = procRes.getValue1();
 		
 		var tableData = tableRow.appendElement("td")
-			.text(tableDataText)
+			.text(text)
 			.addClass("reference");
 		
-		if (isReducted)
+		if (isReduced)
 			setOpenReductedEvent(tableData, attrValue);
 	}
 	
@@ -268,22 +282,19 @@ public class HtmlMaker {
 	}
 	
 	private void makeEqualCell(Element tableRow){
-		tableRow.appendElement("td").attr("class", "eq");
-		
+		tableRow.appendElement("td").addClass("eq");
 	}
 	
 	private void makeNotEqualCell(Element tableRow, String refValue, Optional<String> targetValue){
-		var originalLength = targetValue.isPresent() ? targetValue.get().length() : 0;
-		
-		var tableDataText = processAttrValue(targetValue);
-		
-		var isReducted = tableDataText.length() < originalLength;
+		var procRes = processAttrValue(targetValue);
+		var text = procRes.getValue0();
+		var isReduced = procRes.getValue1();
 		
 		var tableData = tableRow.appendElement("td")
-			.text(tableDataText)
+			.text(text)
 			.addClass("neq");
 		
-		if (isReducted){
+		if (isReduced){
 			var fullValue = new StringBuilder(targetValue.get());
 			
 			var diffPos = findFirstDiffPos(refValue, fullValue.toString());
@@ -355,21 +366,21 @@ public class HtmlMaker {
 		return Optional.of(targetAttrOpt.get().getValue());
 	}
 	
-	private String processAttrValue(Optional<String> valueOpt){		
+	private Pair<String, Boolean> processAttrValue(Optional<String> valueOpt){		
 		if (valueOpt.isEmpty())
-			return "<MISSED>";
+			return Pair.with("<MISSED>", false);
 
 		return processAttrValue(valueOpt.get());
 	}
 	
-	private String processAttrValue(String value){		
+	private Pair<String, Boolean> processAttrValue(String value){		
 		if (value.equals(""))
-			return "<EMPTY>";
+			return Pair.with("<EMPTY>", false);
 		
 		return Reduce(value);
 	}
 	
-	private String Reduce(String value){
+	private Pair<String, Boolean> Reduce(String value){
 		var largeValueSign = 100;
 		var n = 23;
 		var k = 27;
@@ -381,7 +392,7 @@ public class HtmlMaker {
 				+ "{СОКРАЩЕНО}"
 				+ value.substring(value.length() - k - 1);
 
-		return value;
+		return Pair.with(value, isLargeValue);
 	}
 	
 	private int findFirstDiffPos(String s1, String s2){

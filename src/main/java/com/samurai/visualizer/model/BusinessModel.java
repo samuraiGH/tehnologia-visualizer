@@ -41,7 +41,7 @@ public class BusinessModel implements IModel {
 	
 	@Override
 	public List<PossibleAttribute> getPossibleAttributes(){
-		return possibleAttrs;
+		return Collections.unmodifiableList(possibleAttrs);
 	}
 
 	@Override
@@ -75,6 +75,7 @@ public class BusinessModel implements IModel {
 				var attrName = attr.getName();
 				var groupName = group.getName();
 				
+				// проверяем, что в списке нет аналогичного значения
 				if (result.stream().noneMatch(item -> 
 					item.name.equals(attrName) 
 					&& item.includingGroup.equals(groupName))
